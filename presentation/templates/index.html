@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全网舆情与跨平台热点追踪分析系统 - Interactive Presentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="logo">热点追踪 <span>Beta</span></div>
+        <ul class="nav-links">
+            <li><a href="#hero">首页</a></li>
+            <li><a href="#motivation">初衷</a></li>
+            <li><a href="#architecture">架构</a></li>
+            <li><a href="#features">功能</a></li>
+            <li><a href="#demo" class="demo-btn">Live Demo</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="section hero">
+        <div class="glass-card hero-content fade-up">
+            <div class="badge">Python Project Presentation</div>
+            <h1>全网舆情与跨平台<br><span class="gradient-text">热点追踪分析系统</span></h1>
+            <p class="subtitle">打通信息孤岛，用数据洞察跨平台舆论走向。一套从自动抓取、智能清洗到多维共现分析与可视化展示的端到端解决方案。</p>
+            <div class="presenter">
+                <img src="https://ui-avatars.com/api/?name=Feng+Junbang&background=0D8ABC&color=fff" alt="Presenter" class="avatar">
+                <div>
+                    <span class="label">汇报人</span>
+                    <span class="name">冯俊帮</span>
+                </div>
+            </div>
+            <a href="#demo" class="primary-btn pulse">开始探索 ➔</a>
+        </div>
+        <div class="hero-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+    </section>
+
+    <!-- Motivation -->
+    <section id="motivation" class="section">
+        <div class="container">
+            <h2 class="section-title">Motivation / 为什么会想做？</h2>
+            <div class="motivation-grid">
+                <div class="glass-card fade-up">
+                    <div class="icon">🔍</div>
+                    <h3>应对信息碎片化</h3>
+                    <p>当今社会，各种社会新闻和热点分布在微博、抖音、百度等各大平台，每个平台的受众群体不同，导致其关注的热门焦点也截然不同。通过自动化系统追踪这些数据，能帮我们冲破“信息茧房”，看到更真实的互联网全貌。</p>
+                </div>
+                <div class="glass-card fade-up" style="animation-delay: 0.1s">
+                    <div class="icon">📊</div>
+                    <h3>跨平台数据对比需求</h3>
+                    <p>单一平台的热榜往往带有局限性。通过打破“信息孤岛”，将多平台热搜自动拉取、合并排重，我们能够更直观地看清某个突发事件究竟是“全网破圈的国民级大事件”，还是仅仅属于某个“特定平台的社区自嗨”。</p>
+                </div>
+                <div class="glass-card fade-up" style="animation-delay: 0.2s">
+                    <div class="icon">💡</div>
+                    <h3>洞见提取与现实价值</h3>
+                    <p>无论是媒体机构进行新闻选题规划、企业公关部门监测品牌突发舆情动态，还是帮助社会学研究者分析重大事件在不同人群分布平台上的传播路径差异，一套稳定、跨平台、实时运行的分析大屏都具有极高的现实应用价值。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture & APIs -->
+    <section id="architecture" class="section">
+        <div class="container">
+            <h2 class="section-title">Architecture & APIs / 架构与巧思</h2>
+            <div class="arch-content glass-card fade-up">
+                <div class="arch-text">
+                    <h3>统一接口与数据清洗引擎</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.95rem;">本程序不仅仅是一个简单的爬虫，它是基于强健的面向对象思维与数据工程规范打造的核心引擎。以下是关键制作巧思：</p>
+                    <ul class="feature-list">
+                        <li><span>⚙️ 统一封装 API 与稳定守护</span> 深入封装底层 <code>requests</code> 打造 <code>HotRankFetcher</code> 类，具备失败退避重试 (Exponential Backoff)、请求超时控制，以及基于日志追溯的健壮性。</li>
+                        <li><span>🧹 宽容热度解析器 (Loose Parser)</span> 构建了一套动态过滤规则的 <code>parse_heat_value</code> 函数，自动识别并洗净“59万”、“3.4亿”、“32w”等杂乱无章的各平台专有数据格式。</li>
+                        <li><span>🗂️ DataFrame 标准化降维</span> 利用 Pandas 对深层嵌套的杂乱平台 JSON 进行字段降维，将所有来源统一映射成：[平​​台、排名、标题、热度] 这样整洁的二维分析表格。</li>
+                        <li><span>✂️ NLP 分词归一 (Keyword Normalization)</span> 结合 Jieba 提取核心意图词，并利用自定义停用词库与 <code>normalize_keyword</code> 别名映射词典（例如自动将 "AI"、"人工智能" 合并为同一个特征维度），大大提升统计准确性。</li>
+                    </ul>
+                </div>
+                <div class="arch-diagram">
+                    <div class="flow-box">各大平台 API <br>(微博/抖音/百度等)</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-box accent">HotRankFetcher <br>统一抓取模块</div>
+                    <div class="arrow">↓</div>
+                    <div class="flow-box">Pandas 数据清洗引擎 <br>NLP 文本归一化</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="section">
+        <div class="container">
+            <h2 class="section-title">Features / 核心功能体验</h2>
+            <div class="features-grid">
+                <div class="feature-item glass-card fade-up">
+                    <div class="feature-icon">☁️</div>
+                    <h4>全网核心词云透视</h4>
+                    <p>通过清洗后的所有热搜标题提取 Top 词频，使用 Matplotlib 动态渲染直观的关键词词云图，一眼聚焦当日舆论重心。</p>
+                </div>
+                <div class="feature-item glass-card fade-up">
+                    <div class="feature-icon">📈</div>
+                    <h4>热点共现与聚合分析</h4>
+                    <p>全自动交叉比对词频字典，挖掘出能够**同时上榜超过2个平台**的“破圈话题”，追踪多平台一致性发酵的热点。</p>
+                </div>
+                <div class="feature-item glass-card fade-up">
+                    <div class="feature-icon">📄</div>
+                    <h4>每日舆情简报与历史追踪</h4>
+                    <p>运用自动摘要系统提取今日“Top 3”跨平台共性话题，并导出格式规整的 Markdown 简报，同时保留历史分析切片用于生成走势图表。</p>
+                </div>
+                <div class="feature-item glass-card fade-up">
+                    <div class="feature-icon">📊</div>
+                    <h4>高定制化大屏分析网关</h4>
+                    <p>自建 Flask 响应式本地服务器，为教研演示或客户展示打造即抽即用的控制台，支持条件过滤并自动导出具备条件格式的高端 Excel 报表。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Demo Core -->
+    <section id="demo" class="section demo-section">
+        <div class="container">
+            <h2 class="section-title">Live Demo / 实时抓取演示</h2>
+            <p class="demo-desc fade-up">现场实时抓取多个平台数据并进行 Pandas 清洗和分词分析，全程约 10 ~ 30 秒，请耐心等待。</p>
+            
+            <div class="demo-container fade-up">
+                <!-- Control Panel -->
+                <div class="demo-controls glass-card">
+                    <h3>控制台</h3>
+                    <p style="color: var(--text-muted); margin: 15px 0;">点击下方按钮，将触发底层 Python 脚本 `main.py` 的 `run_full_analysis()`，这会遍历抓取所有配置的热榜接口并生成可视化图表。</p>
+                    <button id="run-btn" class="run-btn">
+                        <span class="icon">▶</span> 执行全网分析脚本 (Run Scripts)
+                    </button>
+                </div>
+
+                <!-- Execution Terminal -->
+                <div class="terminal glass-card dark-mode">
+                    <div class="terminal-header">
+                        <div class="dots"><span></span><span></span><span></span></div>
+                        <div class="title">main.py ~ subprocess</div>
+                    </div>
+                    <div class="terminal-body" id="term-output">
+                        <div class="term-line welcome">Welcome to the presentation terminal.</div>
+                        <div class="term-line">Waiting for execution command...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Cards (Hidden initially) -->
+            <div id="demo-result" class="demo-result fade-up hidden">
+                <div class="glass-card" style="text-align: center;">
+                    <h3>🎉 分析完成</h3>
+                    <p style="margin: 15px 0;">全网图表、Excel 和 Markdown 简报已生成完毕！</p>
+                    <a href="/dashboard" target="_blank" class="primary-btn" style="padding: 10px 25px; font-size: 1rem;">打开可视化仪表盘仪</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reflections -->
+    <section id="reflections" class="section">
+        <div class="container">
+            <div class="glass-card reflection-card fade-up">
+                <h2>Reflections / 项目复盘与未来展望</h2>
+                <div class="ref-content">
+                    <div class="ref-item">
+                        <h4>🌱 收获与实战心得</h4>
+                        <p>在这趟结合了“全栈网页开发”与“前沿数据分析”的技术旅程中，我不仅强化了使用 Python 发起多平台 API 并发请求的实操技巧，还掌握了 Pandas 高阶数据清洗的各种坑（如缺失值处理、脏数据格式洗白）。更重要的是，在运用 Jieba 分词与构建前端系统交互链路时，我深刻懂得了“好的代码架构（面向对象与高内聚类设计）”是对抗需求变更的最佳利刃。在实现从数据孤岛到统一仪表盘的过程中，我也锻炼了将枯燥数据转化成动人视觉效果的设计嗅觉。</p>
+                    </div>
+                    <div class="ref-item">
+                        <h4>🚀 未来展望规划</h4>
+                        <p>当前的舆情筛选依然侧重于静态词频。未来，我计划进一步引入 LLM (大语言模型，如 DeepSeek 或 ChatGPT API) 进行深层次语义过滤，能够针对特定的争议新闻自动输出**情感极性分析（正向/中立/负向）报告**。同时，我也希望给 Flask 后端增加一套长连接自动化 Cron 服务器架构，并对接 企业微信/飞书 机器人，一旦检测到涉及到特定企业特征词汇负面热搜爆发，自动截留发送紧急警报通知。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="glass-footer">
+        <p>Created by 冯俊帮 &copy; 2026. Powered by Python & Flask.</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

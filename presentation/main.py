@@ -95,6 +95,7 @@ PLATFORMS: List[Dict[str, str]] = [
 
 # 第 3 处：中文字体配置（用于 Matplotlib / WordCloud 防止中文乱码）
 CHINESE_FONTS = [
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "SimHei.ttf"), # 优先使用集成的字体文件
     r"C:\Windows\Fonts\simhei.ttf",        # 常见中文黑体（SimHei）
     r"C:\Windows\Fonts\msyh.ttc",          # 微软雅黑
     r"/System/Library/Fonts/STHeiti Medium.ttc",  # macOS 示意

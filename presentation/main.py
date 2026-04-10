@@ -1673,15 +1673,15 @@ HTML_TEMPLATE = """
 
     <div class="controls">
         <div class="controls-group">
-            <a class="btn primary" href="/refresh">重新抓取并分析（可能需 10~30 秒）</a>
-            <a class="btn danger" href="/refresh?force=1">强制刷新（无视 10 分钟缓存）</a>
+            <a class="btn primary" href="/dashboard/refresh">重新抓取并分析（可能需 10~30 秒）</a>
+            <a class="btn danger" href="/dashboard/refresh?force=1">强制刷新（无视 10 分钟缓存）</a>
         </div>
         <div class="controls-group">
-            <a class="btn" href="/download/{{ excel_filename }}">下载 Excel 报告</a>
-            <a class="btn" href="/download/{{ bar_chart_filename }}">下载 Top5 对比图</a>
-            <a class="btn" href="/download/{{ wordcloud_filename }}">下载 词云图</a>
-            <a class="btn" href="/download/{{ md_filename }}">下载 Markdown 简报</a>
-            <a class="btn" href="/export_html{{ current_query }}">导出静态 HTML 报告</a>
+            <a class="btn" href="/dashboard/download/{{ excel_filename }}">下载 Excel 报告</a>
+            <a class="btn" href="/dashboard/download/{{ bar_chart_filename }}">下载 Top5 对比图</a>
+            <a class="btn" href="/dashboard/download/{{ wordcloud_filename }}">下载 词云图</a>
+            <a class="btn" href="/dashboard/download/{{ md_filename }}">下载 Markdown 简报</a>
+            <a class="btn" href="/dashboard/export_html{{ current_query }}">导出静态 HTML 报告</a>
         </div>
     </div>
 
@@ -1739,7 +1739,7 @@ HTML_TEMPLATE = """
     </div>
 
     <div class="search-panel">
-        <form method="get" action="/">
+        <form method="get" action="/dashboard">
             <div class="controls-group">
                 <label><b>关键词筛选（下拉可选）</b></label>
                 <select name="keyword">
@@ -1790,8 +1790,8 @@ HTML_TEMPLATE = """
                     <option value="50" {% if topn == 50 %}selected{% endif %}>50</option>
                 </select>
 
-                <button class="btn primary" type="submit">应用</button>
-                <a class="btn" href="/">清除筛选</a>
+                <button type="submit" class="primary">搜索过滤</button>
+                <a class="btn" href="/dashboard">清除筛选</a>
             </div>
             <div class="muted" style="margin-top:8px;">
                 提示：选择关键词后，下方四个平台表格会自动筛选命中条目；词频表会置顶该关键词，并展示该关键词出现的平台。
@@ -1912,13 +1912,35 @@ HTML_TEMPLATE = """
 """
 
 
-@app.route("/")
+@app.route("/dashboard")
 def dashboard() -> str:
     """
     Web 主頁：顯示圖像、表格與簡報內容。
     """
-    if ANALYSIS_RESULTS is None:
-        return "<h3>分析结果尚未生成 (内存已重置)。</h3><p>请先回到 <a href='/'>首页前台展示</a>，找到 Live Demo 区域并点击【执行全网分析脚本】获取最新数据！</p>"
+    if ANALYSIS_RESULTS is None or not ANALYSIS_RESULTS:
+        # If no results and it's the dashboard, render a mini UI to trigger it!
+        return """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>数据尚未加载</title>
+            <style>
+                body { font-family: -apple-system, system-ui, sans-serif; background: #f5f7fa; text-align: center; padding: 100px 20px; }
+                .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; }
+                a.btn { display: inline-block; background: #0D8ABC; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; margin-top: 20px; }
+                a.btn:hover { background: #0b709a; }
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <h2>📈 分析结果尚未生成 (或内存已重置)</h2>
+                <p style="color: #666; margin-top: 15px;">全网舆情监控大屏需要抓取实时热榜数据。<br>由于休眠或首次启动，内存中暂无缓存数据。</p>
+                <a class="btn" href="/dashboard/refresh">获取最新舆情数据 (约需30秒)</a>
+            </div>
+        </body>
+        </html>
+        """
 
     r = ANALYSIS_RESULTS
 
@@ -2280,7 +2302,7 @@ def dashboard() -> str:
     )
 
 
-@app.route("/refresh")
+@app.route("/dashboard/refresh")
 def refresh() -> str:
     """
     重新抓取與分析（帶快取 TTL，避免過度頻繁調用 API）。
@@ -2306,7 +2328,7 @@ def refresh() -> str:
     return dashboard()
 
 
-@app.route("/download/<path:filename>")
+@app.route("/dashboard/download/<path:filename>")
 def download_file(filename: str):
     """
     下载导出文件（Excel / PNG / Markdown）。
@@ -2332,7 +2354,7 @@ def download_file(filename: str):
     return send_from_directory(output_dir, filename, as_attachment=True)
 
 
-@app.route("/export_html")
+@app.route("/dashboard/export_html")
 def export_html():
     """
     导出当前页面为静态 HTML 文件（便于老师离线打开查看）。

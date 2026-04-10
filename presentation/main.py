@@ -1918,7 +1918,7 @@ def dashboard() -> str:
     Web 主頁：顯示圖像、表格與簡報內容。
     """
     if ANALYSIS_RESULTS is None:
-        return "分析结果尚未生成，请先在命令行运行 python main.py 执行分析。"
+        return "<h3>分析结果尚未生成 (内存已重置)。</h3><p>请先回到 <a href='/'>首页前台展示</a>，找到 Live Demo 区域并点击【执行全网分析脚本】获取最新数据！</p>"
 
     r = ANALYSIS_RESULTS
 

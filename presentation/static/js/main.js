@@ -70,6 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (data.type === 'log') {
                 appendTerminal(data.text);
+            } else if (data.type === 'ping') {
+                // 心跳包，不显示在终端，仅用于维持连接
+                console.log('Keep-alive heartbeat received');
             } else if (data.type === 'done') {
                 source.close();
                 runBtn.disabled = false;
@@ -86,7 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
             source.close();
             runBtn.disabled = false;
             runBtn.innerHTML = '<span class="icon">▶</span> 执行全网分析脚本 (Run Scripts)';
-            appendTerminal('[ERROR] Server connection failed or lost. Processing might still be running.', 'err');
+            appendTerminal('[ERROR] Server connection closed. The process may still be running in the background.', 'err');
+            appendTerminal('请稍等15秒后，直接尝试点击下方出现的“打开仪表盘”按钮查看结果。', 'info');
+            
+            // 即便报错，也强行显示结果按钮，因为后端可能已经执行成功只是连接断了
+            demoResult.classList.remove('hidden');
+            demoResult.classList.add('visible');
         };
     });
 });

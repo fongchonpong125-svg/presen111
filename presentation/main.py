@@ -194,22 +194,28 @@ def setup_logging() -> None:
 def setup_matplotlib(font_path: Optional[str]) -> None:
     """
     配置 Matplotlib 使用中文字体，避免出现乱码或方块字。
-
-    参数:
-        font_path: 字体文件路径，如果为 None 则尝试使用 SimHei 等别名。
     """
-    if font_path:
-        # 使用字體檔案註冊對應字體名稱，再全域套用
+    if font_path and os.path.exists(font_path):
         try:
+            # 【重要】直接将字体文件注册到 Matplotlib 的全局管理器中
+            # 这是在 Linux/Render 等服务器环境下最稳定的加载方式
+            from matplotlib import font_manager
+            font_manager.fontManager.addfont(font_path)
+            
+            # 获取该字体文件的真实名称
             font_prop = font_manager.FontProperties(fname=font_path)
             font_name = font_prop.get_name()
-            matplotlib.rcParams["font.family"] = font_name
-        except Exception:
-            # 如果註冊失敗，退回使用常見中文字體名稱
-            matplotlib.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "STHeiti"]
+            
+            # 设置全局字体
+            # matplotlib.rcParams["font.family"] = font_name # 有时会有冲突
+            matplotlib.rcParams["font.sans-serif"] = [font_name, "SimHei", "DejaVu Sans"]
+            logging.info(f"成功通过 addfont 注册并启用字体: {font_name} (路径: {font_path})")
+        except Exception as e:
+            logging.error(f"注册字体文件失败: {e}，将尝试备选方案")
+            matplotlib.rcParams["font.sans-serif"] = ["SimHei", "DejaVu Sans"]
     else:
-        # 未提供具體字體檔案時，直接指定常見中文字體名稱
-        matplotlib.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "STHeiti"]
+        matplotlib.rcParams["font.sans-serif"] = ["SimHei", "DejaVu Sans"]
+    
     # 解决负号 '-' 显示为方块的问题
     matplotlib.rcParams["axes.unicode_minus"] = False
 

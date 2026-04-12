@@ -59,21 +59,28 @@ def run_demo():
     thread.start()
     
     def generate():
+        # 发送初始信息
         yield f"data: {json.dumps({'type': 'log', 'text': '[INFO] Initiating full cross-platform analysis...'})}\n\n"
         
         while True:
-            # Block until a log line is available
-            line = q.get()
-            if line is None:
-                break
+            try:
+                # 阻塞直到有新日志，但设置超时，以便发送心跳包
+                # 15 秒是 Render 网关通常能容忍的静默极限
+                line = q.get(timeout=15)
                 
-            # If the log is clean, prefix it to look like a terminal
-            if not line.startswith('['):
-                line = f"[INFO] {line}"
-                
-            yield f"data: {json.dumps({'type': 'log', 'text': line})}\n\n"
+                if line is None:
+                    break
+                    
+                if not line.startswith('['):
+                    line = f"[INFO] {line}"
+                    
+                yield f"data: {json.dumps({'type': 'log', 'text': line})}\n\n"
             
-        # Cleanup
+            except queue.Empty:
+                # 超时了，发送一个心跳包（ping），保持 HTTP 连接不被服务器掐断
+                yield f"data: {json.dumps({'type': 'ping'})}\n\n"
+            
+        # 清理
         root_logger.removeHandler(handler)
         
         yield f"data: {json.dumps({'type': 'log', 'text': '[SUCCESS] Full analysis completed successfully!'})}\n\n"
